@@ -1,5 +1,27 @@
 # threads-project
 
+An implementation of a thread library using a preemptive scheduling mechanism (round-robin) and a deadlock detection algorithm.
+
+## Notes
+
+What is __round-robin scheduling__?
+
+__Round-robin__ is a preemptive scheduling algorithm where time slices are assigned to each process in equal portions and in circular order. The processes are not ordered by priority and whenever a process does not finish its job in a given time slice, it is placed into the queue to be resumed later on. In other words, the job is suspended after the duration of the time slice and is pushed onto the queue if it is not yet completed.
+
+What is the __shortest-remaining time first__ algorithm?
+
+Shortest Remaining Time First is a preemptive CPU scheduling algorithm that selects the process with the smallest remaining burst time to execute next. It continuously monitors the remaining execution time of processes and may preempt the currently running process if a new process arrives with a shorter remaining time.
+
+How does the waits-for-graph deadlock detection algorithm?
+
+The waits-for graph is a directed graph representation of the resource allocation and resource request relationships among processes. In this graph, nodes represent either processes or resources, while edges represent the relationship between processes and resources. If a process is currently holding a resource, there is a directed edge from the process to the resource. If a process is waiting for a resource, there is a directed edge from the resource to the process.
+
+1. Initialize the waits-for graph with nodes representing processes and resources, and edges representing the allocation and request relationships.
+2. Periodically scan the graph to identify cycles. A cycle in the graph indicates a potential deadlock.
+3. If a cycle is detected, determine whether it corresponds to a deadlock by checking whether each process in the cycle is waiting for a resource held by the next process in the cycle.
+4. If all processes in the cycle are indeed waiting for a resource held by the next process in the cycle, then a deadlock is confirmed.
+5. Once a deadlock is detected, appropriate actions can be taken to resolve it, such as preemptively releasing resources held by processes or killing processes to break the deadlock.
+
 How do multiple types of threads yield a processor?
 
 - preemptive threads
@@ -9,7 +31,7 @@ How do multiple types of threads yield a processor?
 
 - cooperative threads (needs to yield processor through an explicit await)
   - 1:1 mapping to system threads &rarr; fibers and coroutines
-  - n:1 mapping to system threads (what we will implement)
+  - n:1 mapping to system threads
   - n:n mapping to system threads
 
 - functions for the thread library project
