@@ -22,6 +22,14 @@ The waits-for graph is a directed graph representation of the resource allocatio
 4. If all processes in the cycle are indeed waiting for a resource held by the next process in the cycle, then a deadlock is confirmed.
 5. Once a deadlock is detected, appropriate actions can be taken to resolve it, such as preemptively releasing resources held by processes or killing processes to break the deadlock.
 
+What are signal sets?
+
+Signal sets are data objects that let a process keep track of groups of signals. For example, a process can create one signal set to record which signals it is blocking, and another signal set to record which signals are pending.
+
+What is the type of `pthread_t` and what type should we use for the green thread/user-level library?
+
+The type is `unsigned long int`, but the POSIX standard specifies that `pthread_t` could be represented by a more complex structure. It is convenient to have `pthread_t` as a data type other than an `unsigned long int` [on systems that do not support such a data type](https://stackoverflow.com/questions/33285562/why-and-in-what-sense-is-pthread-t-an-opaque-type). However, we will use the `unsigned long int` in the project. 
+
 How do multiple types of threads yield a processor?
 
 - preemptive threads
