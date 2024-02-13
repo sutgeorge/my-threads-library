@@ -22,10 +22,10 @@ int main() {
     ult_join(g_th2, NULL);
 
     if (result[g_th1] != 0 || result[g_th2] != 1) {
-        fprintf(stderr,"Test \"6 - verifying thread ID equality check\" failed.");
+        fprintf(stderr,"Test \"6 - verifying thread ID equality check\" failed.\n");
         return 0;
     }
 
-    printf("Test \"6 - verifying thread ID equality check\" passed!");
+    printf("Test \"6 - verifying thread ID equality check\" passed!\n");
     return 0;
 }
