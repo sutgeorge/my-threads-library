@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include "queue.h"
 
+// initializes the queue
 void queue_init(queue_t *this){
     this->front = NULL;
     this->back = NULL;
     this->N = 0;
 }
 
+// adds an item to the back of the queue
 void queue_enqueue(queue_t* this, queue_item item){
     queue_node_t* node;
 
@@ -24,6 +26,7 @@ void queue_enqueue(queue_t* this, queue_item item){
     this->N++;
 }
 
+// adds an item to the front of the queue
 void queue_push(queue_t* this, queue_item item){
     queue_node_t* node;
 
@@ -38,14 +41,17 @@ void queue_push(queue_t* this, queue_item item){
     this->N++;
 }
 
+// returns the size of the queue (no. of elements in the queue)
 int queue_size(queue_t* this){
     return this->N;
 }
 
+// checks if the queue is empty and returns 1 or 0, depending on the queue's status
 int queue_isempty(queue_t *this){
     return this->N == 0;
 }
 
+// removes an element from the front of the queue
 queue_item queue_pop(queue_t* this){
     queue_item ans;
     queue_node_t* node;
@@ -68,16 +74,7 @@ queue_item queue_pop(queue_t* this){
     return ans;
 }
 
-void queue_cycle(queue_t* this) {
-    if(this->back == NULL)
-        return;
-
-    this->back->next = this->front;
-    this->back = this->front;
-    this->front = this->front->next;
-    this->back->next = NULL;
-}
-
+// returns the element in the front of the queue
 queue_item queue_front(queue_t* this) {
     if(this->front == NULL){
         fprintf(stderr, "Error: underflow in queue_front.\n");
@@ -88,6 +85,7 @@ queue_item queue_front(queue_t* this) {
     return this->front->item;
 }
 
+// frees up all the resources used by the queue
 void queue_destroy(queue_t* this) {
     while(!queue_isempty(this))
         queue_pop(this);

@@ -5,6 +5,7 @@
 
 extern sigset_t vtalrm;
 
+// initializes a mutex and returns 0 to indicate a successful initialization
 int ult_mutex_init(ult_mutex_t* mutex) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
     queue_init(mutex);
@@ -12,6 +13,7 @@ int ult_mutex_init(ult_mutex_t* mutex) {
     return 0;
 }
 
+// acquires a mutex and returns 0 to indicate a successful mutex lock
 int ult_mutex_lock(ult_mutex_t* mutex){
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
 
@@ -37,6 +39,7 @@ int ult_mutex_lock(ult_mutex_t* mutex){
     return 0;
 }
 
+// releases a mutex and returns 0 to indicate a successful mutex unlock
 int ult_mutex_unlock(ult_mutex_t *mutex){
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
     if (queue_isempty(mutex)) {
@@ -54,6 +57,8 @@ int ult_mutex_unlock(ult_mutex_t *mutex){
     return 0;
 }
 
+// destroys a mutex and returns 0 to indicate a successful mutex destruction, freeing
+// up the memory allocated for the queue
 int ult_mutex_destroy(ult_mutex_t *mutex){
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
     queue_destroy(mutex);

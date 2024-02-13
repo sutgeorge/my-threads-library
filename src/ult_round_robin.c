@@ -7,9 +7,10 @@
 #include "ult.h"
 #include "queue.h"
 
-#define ULT_RUNNING 0
-#define ULT_CANCEL 1
-#define ULT_DONE 2
+// thread status constants
+#define ULT_RUNNING 0 // running
+#define ULT_CANCEL 1 // cancelled
+#define ULT_DONE 2 // fully terminated
 
 typedef struct Thread_t {
     ult_t tid;
@@ -32,6 +33,7 @@ void sigvtalrm_handler(int sig);
 void ult_start(void* (*start_routine)(void*), void* args);
 thread_t* thread_get(ult_t tid);
 
+// initializes the library and prepares the time slice value in microseconds
 void ult_init(long period) {
     struct sigaction act;
 
@@ -75,7 +77,9 @@ void ult_init(long period) {
     }
 }
 
-
+// similar to pthread_create, the *thread parameter will contain the ID of the created thread,
+// while start_routine and arg are the function and its corresponding arguments representing the
+// launched thread
 int ult_create(ult_t *thread, void *(*start_routine)(void *), void *arg) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
 
@@ -105,6 +109,8 @@ int ult_create(ult_t *thread, void *(*start_routine)(void *), void *arg) {
     return 0;
 }
 
+// Like pthread_join, this function waits for the thread to terminate. The "status" parameter
+// will contain the status of the joined thread after its termination.
 int ult_join(ult_t thread, void **status) {
     if (thread == current->tid)
         return -1;
@@ -134,6 +140,8 @@ int ult_join(ult_t thread, void **status) {
     return 0;
 }
 
+// Like pthread_exit, this function terminates the calling thread, after which the retval parameter
+// will contain the termination status (a value that can be used by other threads in the same process).
 void ult_exit(void* retval) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
 
@@ -170,6 +178,9 @@ void ult_exit(void* retval) {
     setcontext(current->ucp);
 }
 
+// Like sched_yield, this function causes the calling thread to relinquish the CPU.
+// The thread is moved to the end of the queue for its static
+// priority and a new thread gets to run.
 int ult_yield(void) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
 
@@ -186,10 +197,12 @@ int ult_yield(void) {
     return 0;
 }
 
-int  ult_equal(ult_t t1, ult_t t2) {
+// Compares two thread IDs to determine whether they are identical or not
+int ult_equal(ult_t t1, ult_t t2) {
     return t1 == t2;
 }
 
+// Sends a cancellation request to a thread (like pthread_cancel)
 int ult_cancel(ult_t thread) {
     if (ult_equal(current->tid, thread))
         ult_exit(0);
@@ -222,6 +235,7 @@ int ult_cancel(ult_t thread) {
     return 0;
 }
 
+// Like pthread_self, it returns the ID of the calling thread
 ult_t ult_self(void) { return current->tid; }
 
 void ult_start(void* (*start_routine)(void*), void* args) {
@@ -230,6 +244,7 @@ void ult_start(void* (*start_routine)(void*), void* args) {
     ult_exit(current->retval);
 }
 
+// a signal handler called by the round-robin scheduler and the mutexes
 void sigvtalrm_handler(int sig) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
 
@@ -251,6 +266,8 @@ void sigvtalrm_handler(int sig) {
     swapcontext(prev->ucp, current->ucp);
 }
 
+// Given a thread ID, this function searches the thread in ready_queue and zombie queue, it is useful
+// when attempting to find out whether the thread to be joined was created before.
 thread_t* thread_get(ult_t tid) {
     queue_node_t* current = ready_queue.front;
     while (current != NULL) {
