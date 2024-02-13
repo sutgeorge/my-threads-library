@@ -27,10 +27,10 @@ int main() {
         ult_join(threads[i], &rets[i]);
 
     for (i = 0; i < NUM_THREADS; ++i)
-        if ((long) rets[i] != values[i])
-            fprintf(stderr,
-                    "Test \"2 - thread joining and values returned\" failed. The %ld-th returned value %ld is incorrect. Expected value: %ld\n",
-                    i, (long) rets[i], values[i]);
+        if ((long) rets[i] != values[i]) {
+            fprintf(stderr,"Test \"2 - thread joining and values returned\" failed. The %ld-th returned value %ld is incorrect. Expected value: %ld\n", i, (long) rets[i], values[i]);
+            return 0;
+        }
 
     printf("Test \"2 - thread joining and values returned\" passed!\n");
     return 0;
