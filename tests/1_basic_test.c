@@ -20,7 +20,7 @@ int main() {
     ult_join(th1, &ret);
 
     if (*(long*) ret != expected_sum) {
-        fprintf(stderr, "Test failed. Returned and expected sum: %lx, %lx\n", *(long*)ret, expected_sum);
+        fprintf(stderr, "Test \"1 - basic test\" failed. Returned and expected sum: %lx, %lx\n", *(long*)ret, expected_sum);
         return 0;
     }
 
