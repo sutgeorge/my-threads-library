@@ -1,9 +1,9 @@
 #ifndef __ULT_H
 #define __ULT_H
 
-#include <ucontext.h>
-#include "queue.h"
-#include <signal.h>
+#include <ucontext.h> // required for the user-level context switching operations
+#include "queue.h" // queue data structure implemented from scratch
+#include <signal.h> // library used for handling OS signals
 
 // a thread is by default represented as an "unsigned long int", just like most platforms define the pthread_t type in
 // the pthread library
