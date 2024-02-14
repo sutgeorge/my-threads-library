@@ -19,6 +19,8 @@ int graph_count_nodes(graph_t* this);
 
 int graph_count_edges(graph_t* this);
 
+int graph_print_edges(graph_t* this);
+
 void graph_destroy(graph_t* this);
 
 #endif

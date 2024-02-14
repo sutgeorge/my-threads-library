@@ -49,6 +49,28 @@ int graph_count_edges(graph_t* this) {
     return number_of_edges;
 }
 
+int graph_print_edges(graph_t* this) {
+    list_node_t* nodes_head = this->nodes.front;
+    list_node_t* adjacency_list_head = this->adjacency_list.front;
+    int number_of_edges = 0;
+
+    while (nodes_head != NULL) {
+        list_t* neighbours = adjacency_list_head->item;
+        list_node_t* neighbours_list_head = neighbours->front;
+
+        while (neighbours_list_head != NULL) {
+            number_of_edges++;
+            printf("Edge no. %d: (%p, %p)\n", number_of_edges, nodes_head->item, neighbours_list_head->item);
+            neighbours_list_head = neighbours_list_head->next;
+        }
+
+        nodes_head = nodes_head->next;
+        adjacency_list_head = adjacency_list_head->next;
+    }
+
+    return number_of_edges;
+}
+
 int graph_count_nodes(graph_t* this) {
     list_node_t* nodes_head = this->nodes.front;
     int number_of_nodes = 0;
