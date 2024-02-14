@@ -86,6 +86,45 @@ list_item list_head(list_t* this) {
     return this->front->item;
 }
 
+// removes an element from the list
+list_item list_remove(list_t* this, list_item item) {
+    list_node_t* current = this->front;
+    list_item removed_item = NULL;
+    list_node_t* prev = NULL;
+
+    while (current != NULL) {
+        if (current->item == item) {
+            removed_item = current->item;
+            if (prev != NULL)
+                prev->next = current->next;
+            else
+                this->front = current->next;
+
+            if (current->next == NULL)
+                this->back = prev;
+
+            free(current);
+            this->N--;
+            break;
+        }
+
+        prev = current;
+        current = current->next;
+    }
+
+    return removed_item;
+}
+
+void print_list_elements(list_t* this) {
+    list_node_t* current = this->front;
+    printf("==============================\n");
+    while (current != NULL) {
+        printf("list element: %p\n", current->item);
+        current = current->next;
+    }
+    printf("==============================\n");
+}
+
 // frees up all the resources used by the list
 void list_destroy(list_t* this) {
     while(!list_isempty(this))

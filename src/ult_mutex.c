@@ -2,13 +2,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "ult.h"
+#include "list.h"
 
-extern sigset_t vtalrm;
+extern sigset_t vtalrm; // check the variable defined in ult_round_robin.c
+list_t list_of_mutexes; // check the variable defined in ult_round_robin.c
 
 // initializes a mutex and returns 0 to indicate a successful initialization
 int ult_mutex_init(ult_mutex_t* mutex) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
     queue_init(mutex);
+    list_pushback(&list_of_mutexes, mutex);
     sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
     return 0;
 }
@@ -62,6 +65,7 @@ int ult_mutex_unlock(ult_mutex_t *mutex){
 int ult_mutex_destroy(ult_mutex_t *mutex){
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
     queue_destroy(mutex);
+    list_remove(&list_of_mutexes, mutex);
     sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
     return 0;
 }

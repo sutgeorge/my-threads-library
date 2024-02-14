@@ -77,6 +77,10 @@ list_2_popping_elements: $(ULTS_OBJ)
 	@$(CC) -o $(TEST_DIR)/list_2_popping_elements -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/list_2_popping_elements.c
 	@./$(TEST_DIR)/list_2_popping_elements
 
+list_3_removing_elements: $(ULTS_OBJ)
+	@$(CC) -o $(TEST_DIR)/list_3_removing_elements -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/list_3_removing_elements.c
+	@./$(TEST_DIR)/list_3_removing_elements
+
 graph_1_basic_test: $(ULTS_OBJ)
 	@$(CC) -o $(TEST_DIR)/graph_1_basic_test -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/graph_1_basic_test.c
 	@./$(TEST_DIR)/graph_1_basic_test
@@ -89,7 +93,7 @@ graph_3_count_edges: $(ULTS_OBJ)
 	@$(CC) -o $(TEST_DIR)/graph_3_count_edges -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/graph_3_count_edges.c
 	@./$(TEST_DIR)/graph_3_count_edges
 
-run_tests: 1_basic_test 2_thread_joins_and_values_returned 3_expected_proper_exit 4_spawning_threads_recursively 5_verifying_thread_id_equality_check 6_verifying_thread_self 7_expected_proper_thread_cancellation 8_mutex_test 9_thread_yield_test 10_producer_consumer_test 11_threads_joining_each_other list_1_basic_test list_2_popping_elements graph_1_basic_test graph_2_count_nodes graph_3_count_edges
+run_tests: 1_basic_test 2_thread_joins_and_values_returned 3_expected_proper_exit 4_spawning_threads_recursively 5_verifying_thread_id_equality_check 6_verifying_thread_self 7_expected_proper_thread_cancellation 8_mutex_test 9_thread_yield_test 10_producer_consumer_test 11_threads_joining_each_other list_1_basic_test list_2_popping_elements list_3_removing_elements graph_1_basic_test graph_2_count_nodes graph_3_count_edges
 
 copy:
 	cp -f $(HEADER) $(INC_DIR)

@@ -35,6 +35,11 @@ list_item list_popfront(list_t* this);
 // returns the element in the front of the list
 list_item list_head(list_t* this);
 
+// removes an element from the list
+list_item list_remove(list_t* this, list_item item);
+
+void print_list_elements(list_t* this);
+
 // frees up all the resources used by the list
 void list_destroy(list_t* this);
 
