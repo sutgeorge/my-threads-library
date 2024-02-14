@@ -7,9 +7,9 @@ SRC_DIR = ./src
 INC_DIR = $(PROJ_DIR)/include
 LIB_DIR = $(PROJ_DIR)/lib
 TEST_DIR = $(PROJ_DIR)/tests
-ULTS_SRC = $(SRC_DIR)/ult_round_robin.c $(SRC_DIR)/ult_mutex.c $(SRC_DIR)/queue.c
+ULTS_SRC = $(SRC_DIR)/ult_round_robin.c $(SRC_DIR)/ult_mutex.c $(SRC_DIR)/queue.c $(SRC_DIR)/dlist.c
 ULTS_OBJ = $(patsubst %.c,%.o,$(ULTS_SRC))
-HEADER = $(SRC_DIR)/ult.h $(SRC_DIR)/queue.h
+HEADER = $(SRC_DIR)/ult.h $(SRC_DIR)/queue.h $(SRC_DIR)/dlist.h
 LIBRARY = libult.a
 
 ### The '@' symbol inserted before each command in the test targets are supposed to suppress GCC echo output
@@ -69,7 +69,15 @@ library: $(ULTS_OBJ)
 	@$(CC) -o $(TEST_DIR)/11_threads_joining_each_other -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/11_threads_joining_each_other.c
 	@./$(TEST_DIR)/11_threads_joining_each_other
 
-run_tests: 1_basic_test 2_thread_joins_and_values_returned 3_expected_proper_exit 4_spawning_threads_recursively 5_verifying_thread_id_equality_check 6_verifying_thread_self 7_expected_proper_thread_cancellation 8_mutex_test 9_thread_yield_test 10_producer_consumer_test 11_threads_joining_each_other
+dlist_1_basic_test: $(ULTS_OBJ)
+	@$(CC) -o $(TEST_DIR)/dlist_1_basic_test -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/dlist_1_basic_test.c
+	@./$(TEST_DIR)/dlist_1_basic_test
+
+dlist_2_popping_elements: $(ULTS_OBJ)
+	@$(CC) -o $(TEST_DIR)/dlist_2_popping_elements -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/dlist_2_popping_elements.c
+	@./$(TEST_DIR)/dlist_2_popping_elements
+
+run_tests: 1_basic_test 2_thread_joins_and_values_returned 3_expected_proper_exit 4_spawning_threads_recursively 5_verifying_thread_id_equality_check 6_verifying_thread_self 7_expected_proper_thread_cancellation 8_mutex_test 9_thread_yield_test 10_producer_consumer_test 11_threads_joining_each_other dlist_1_basic_test dlist_2_popping_elements
 
 copy:
 	cp -f $(HEADER) $(INC_DIR)

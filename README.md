@@ -31,7 +31,8 @@ Possible algorithms that could be used to identify cycles in the waits-for graph
 2. __Tarjan's strongly connected components__: an algorithm that is usually used to identify the strongly connected components of a directed graph, which are essentially groups of connected nodes which can be accessed within the strongly connected component following some path from any other node. Even though the strongly connected components are identified (and in a directed graph, it is known that in order to reach a node from any other node, there needs to be at least one cycle in the strongly connected component), this method will only identify the strongly connected components and not the cycles themselves. So, in other words, we would still need to run a depth-first search on each strongly connected component.
 
 Tests:
-- create a scenario similar to what happens in database management systems when multiple transactions attempt to access locks and end up waiting for each other to release the locks
+- create a simple scenario involving two threads that wait for each other to release the requested locks
+- create a scenario similar to what happens in database management systems when multiple transactions attempt to access locks and end up waiting for each other to release the locks, thus causing a deadlock to occur
 
 Notes:
 - read the specifications of the MSSQL documentation on the chosen time intervals for the [periodic deadlock check](https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-deadlocks-guide?view=sql-server-ver16#deadlock_detection) &rarr; reminiscent of the __eventually perfect failure detector__ concept, the time period has a default value of 5 seconds and is increased or decreased depending on how often deadlocks are actually detected
