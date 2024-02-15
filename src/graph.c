@@ -13,6 +13,22 @@ void graph_add_node(graph_t* this, graph_node node) {
     list_pushback(&this->adjacency_list, neighbours_list);
 }
 
+void graph_remove_node(graph_t* this, graph_node node) {
+    list_node_t* current = this->nodes.front;
+    list_node_t* adjacency_list_head = this->adjacency_list.front;
+
+    while (current != NULL) {
+        if (current->item == node) {
+            list_remove(&this->adjacency_list, adjacency_list_head);
+            list_remove(&this->nodes, node);
+            return;
+        }
+
+        current = current->next;
+        adjacency_list_head = adjacency_list_head->next;
+    }
+}
+
 void graph_add_edge(graph_t* this, graph_node source_node, graph_node destination_node) {
     list_node_t* nodes_head = this->nodes.front;
     list_node_t* adjacency_list_head = this->adjacency_list.front;
@@ -26,6 +42,21 @@ void graph_add_edge(graph_t* this, graph_node source_node, graph_node destinatio
 
     if (adjacency_list_head != NULL)
         list_pushback(adjacency_list_head->item, destination_node);
+}
+
+void graph_remove_edge(graph_t* this, graph_node source_node, graph_node destination_node) {
+    list_node_t* nodes_head = this->nodes.front;
+    list_node_t* adjacency_list_head = this->adjacency_list.front;
+
+    while (nodes_head != NULL) {
+        if (nodes_head->item == source_node)
+            break;
+        nodes_head = nodes_head->next;
+        adjacency_list_head = adjacency_list_head->next;
+    }
+
+    if (adjacency_list_head != NULL)
+        list_remove(adjacency_list_head->item, destination_node);
 }
 
 int graph_count_edges(graph_t* this) {
@@ -98,7 +129,7 @@ bool graph_dfs(graph_t* this) {
         printf("graph dfs debug -> current_node: %p\n", current_node->item);
 
         if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item))
-            cycle_detected |= graph_visit(this, current_node->item, discovered, finished);
+            cycle_detected |= graph_visit(this, current_node->item, discovered, finished);//, cycles);
 
         nodes_list_head = nodes_list_head->next;
         adjacency_list_head = adjacency_list_head->next;
@@ -110,7 +141,7 @@ bool graph_dfs(graph_t* this) {
     return cycle_detected;
 }
 
-bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* finished) {
+bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* finished) { //, list_t* cycles) {
     list_pushback(discovered, node);
 
     list_node_t* nodes_list_head = this->nodes.front;
@@ -129,6 +160,26 @@ bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* fin
     while (neighbour_node != NULL) {
         if (list_find(discovered, neighbour_node->item)) {
             cycle_detected = true;
+
+            printf("start of the cycle: %p\n", neighbour_node->item);
+            printf("discovered cycle: \n");
+
+            list_node_t* discovered_node = discovered->front;
+            list_t* detected_cycle_path = (list_t*) malloc(sizeof(list_t));
+            bool cycle_path_started = false;
+
+            while (discovered_node != NULL) {
+                if (discovered_node->item == neighbour_node->item)
+                    cycle_path_started = true;
+
+                if (cycle_path_started)
+                    list_pushback(detected_cycle_path, discovered_node->item);
+
+                discovered_node = discovered_node->next;
+            }
+
+            list_pushback(detected_cycle_path, neighbour_node->item);
+            print_list_elements(detected_cycle_path);
             break;
         }
 

@@ -28,7 +28,7 @@ int main() {
     graph_add_edge(&mygraph2, (void*)3, (void*)4);
     graph_add_edge(&mygraph2, (void*)5, (void*)4);
     graph_add_edge(&mygraph2, (void*)5, (void*)2);
-    graph_add_edge(&mygraph2, (void*)4, (void*)5);
+    graph_add_edge(&mygraph2, (void*)4, (void*)2);
 
     assert(graph_dfs(&mygraph2) == true);
 
@@ -49,9 +49,28 @@ int main() {
     graph_print_edges(&mygraph3);
     assert(graph_dfs(&mygraph3) == false);
 
+    graph_t mygraph4;
+    graph_init(&mygraph4);
+
+    graph_add_node(&mygraph4, (void*)1);
+    graph_add_node(&mygraph4, (void*)2);
+    graph_add_node(&mygraph4, (void*)3);
+    graph_add_node(&mygraph4, (void*)4);
+    graph_add_node(&mygraph4, (void*)5);
+    graph_add_edge(&mygraph4, (void*)1, (void*)2);
+    graph_add_edge(&mygraph4, (void*)2, (void*)3);
+    graph_add_edge(&mygraph4, (void*)3, (void*)4);
+    graph_add_edge(&mygraph4, (void*)5, (void*)4);
+    graph_add_edge(&mygraph4, (void*)4, (void*)2);
+    graph_add_edge(&mygraph4, (void*)4, (void*)3);
+
+    graph_print_edges(&mygraph4);
+    assert(graph_dfs(&mygraph4) == true);
+
     graph_destroy(&mygraph);
     graph_destroy(&mygraph2);
     graph_destroy(&mygraph3);
+    graph_destroy(&mygraph4);
     printf("Graph test \"4 - detecting cycles\" passed!\n");
     return 0;
 }

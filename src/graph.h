@@ -13,7 +13,11 @@ void graph_init(graph_t* this);
 
 void graph_add_node(graph_t* this, graph_node node);
 
+void graph_remove_node(graph_t* this, graph_node node);
+
 void graph_add_edge(graph_t* this, graph_node source_node, graph_node destination_node);
+
+void graph_remove_edge(graph_t* this, graph_node source_node, graph_node destination_node);
 
 int graph_count_nodes(graph_t* this);
 
