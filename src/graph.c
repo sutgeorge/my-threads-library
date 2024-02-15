@@ -83,6 +83,67 @@ int graph_count_nodes(graph_t* this) {
     return number_of_nodes;
 }
 
+bool graph_dfs(graph_t* this) {
+    list_t* discovered = (list_t*) malloc(sizeof(list_t));
+    list_t* finished = (list_t*) malloc(sizeof(list_t));
+
+    list_node_t* nodes_list_head = this->nodes.front;
+    list_node_t* adjacency_list_head = this->adjacency_list.front;
+    list_node_t* current_node = NULL;
+
+    bool cycle_detected = false;
+
+    while (nodes_list_head != NULL) {
+        current_node = nodes_list_head;
+        printf("graph dfs debug -> current_node: %p\n", current_node->item);
+
+        if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item))
+            cycle_detected |= graph_visit(this, current_node->item, discovered, finished);
+
+        nodes_list_head = nodes_list_head->next;
+        adjacency_list_head = adjacency_list_head->next;
+    }
+
+    list_destroy(discovered);
+    list_destroy(finished);
+
+    return cycle_detected;
+}
+
+bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* finished) {
+    list_pushback(discovered, node);
+
+    list_node_t* nodes_list_head = this->nodes.front;
+    list_node_t* adjacency_list_head = this->adjacency_list.front;
+
+    while (nodes_list_head != NULL && nodes_list_head->item != node) {
+        nodes_list_head = nodes_list_head->next;
+        adjacency_list_head = adjacency_list_head->next;
+    }
+
+    list_t* adjacency_list = adjacency_list_head->item;
+    list_node_t* neighbour_node = adjacency_list->front;
+
+    bool cycle_detected = false;
+
+    while (neighbour_node != NULL) {
+        if (list_find(discovered, neighbour_node->item)) {
+            cycle_detected = true;
+            break;
+        }
+
+        if (!list_find(finished, neighbour_node->item))
+            cycle_detected = graph_visit(this, neighbour_node->item, discovered, finished);
+
+        neighbour_node = neighbour_node->next;
+    }
+
+    list_remove(discovered, node);
+    list_pushback(finished, node);
+
+    return cycle_detected;
+}
+
 void graph_destroy(graph_t* this) {
     list_node_t* adjacency_list_head = this->adjacency_list.front;
 

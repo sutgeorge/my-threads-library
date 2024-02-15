@@ -115,6 +115,19 @@ list_item list_remove(list_t* this, list_item item) {
     return removed_item;
 }
 
+// finds whether an element exists in the list or not
+bool list_find(list_t* this, list_item item) {
+    list_node_t* current = this->front;
+    while (current != NULL) {
+        if (current->item == item)
+            return true;
+
+        current = current->next;
+    }
+    return false;
+}
+
+// prints the elements in the list
 void print_list_elements(list_t* this) {
     list_node_t* current = this->front;
     printf("==============================\n");

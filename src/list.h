@@ -1,5 +1,6 @@
 #ifndef LIST_H
 #define LIST_H
+#include <stdbool.h>
 
 typedef void* list_item;
 
@@ -38,6 +39,10 @@ list_item list_head(list_t* this);
 // removes an element from the list
 list_item list_remove(list_t* this, list_item item);
 
+// finds whether an element exists in the list or not
+bool list_find(list_t* this, list_item item);
+
+// prints the elements in the list
 void print_list_elements(list_t* this);
 
 // frees up all the resources used by the list

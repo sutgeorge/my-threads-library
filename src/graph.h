@@ -21,6 +21,10 @@ int graph_count_edges(graph_t* this);
 
 int graph_print_edges(graph_t* this);
 
+bool graph_dfs(graph_t* this);
+
+bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* finished);
+
 void graph_destroy(graph_t* this);
 
 #endif

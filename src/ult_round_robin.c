@@ -34,6 +34,7 @@ static list_t list_of_mutexes;
 // A queue that stores all of the terminated or cancelled (soon to be terminated) threads -> used in the thread_get
 // function to obtain a thread's ID even if it has completed its execution.
 static queue_t zombie_queue;
+// A variable that stores the context of the current thread that is running
 static thread_t* current;
 // an interval timer that keeps track of time and expires at some point. In our case, this will be set to the
 // ITIMER_VIRTUAL type, for which a SIGVTALRM signal is received by the process when the timer expires
@@ -115,6 +116,8 @@ void ult_init(long period) {
         perror ("sigaction");
         exit(EXIT_FAILURE);
     }
+
+
 }
 
 // similar to pthread_create, the *thread parameter will contain the ID of the created thread,
