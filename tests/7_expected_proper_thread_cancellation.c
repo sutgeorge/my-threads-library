@@ -26,12 +26,16 @@ int main() {
     ult_create(&th, infinite_worker_1, NULL);
 
     if(ult_cancel(th) == -1) {
+        printf("\033[0;31m");
         printf("Test \"7 - expected proper thread cancellation check\" failed!\n");
+        printf("\033[0m");
         exit(EXIT_FAILURE);
     }
 
     ult_join(th, NULL);
 
+    printf("\033[1;32m");
     printf("Test \"7 - expected proper thread cancellation check\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

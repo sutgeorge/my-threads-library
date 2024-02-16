@@ -15,6 +15,8 @@ int main() {
     assert(list_find(&mylist, (void*)7) == true);
     assert(list_find(&mylist, (void*)12) == false);
 
+    printf("\033[1;32m");
     printf("Linked list test \"4 - find an element\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

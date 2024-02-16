@@ -35,6 +35,9 @@ queue_item queue_pop(queue_t* this);
 // returns the element in the front of the queue
 queue_item queue_front(queue_t* this);
 
+// returns the element in the back of the queue
+queue_item queue_back(queue_t* this);
+
 // frees up all the resources used by the queue
 void queue_destroy(queue_t* this);
 

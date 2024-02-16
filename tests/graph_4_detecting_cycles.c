@@ -71,6 +71,9 @@ int main() {
     graph_destroy(&mygraph2);
     graph_destroy(&mygraph3);
     graph_destroy(&mygraph4);
+
+    printf("\033[1;32m");
     printf("Graph test \"4 - detecting cycles\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

@@ -23,6 +23,8 @@ int main() {
     ult_create(&th, worker, (void*) 1);
     ult_join(th, NULL);
 
+    printf("\033[1;32m");
     printf("Test \"4 - spawning threads recursively\" passed! (check the output above for any inconsistencies) \n");
+    printf("\033[0m");
     return 0;
 }

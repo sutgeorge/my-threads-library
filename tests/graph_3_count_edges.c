@@ -27,6 +27,9 @@ int main() {
 
     graph_print_edges(&mygraph);
     graph_destroy(&mygraph);
+
+    printf("\033[1;32m");
     printf("Graph test \"3 - count edges explicitly\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

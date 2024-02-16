@@ -20,10 +20,14 @@ int main() {
     ult_join(th1, &ret);
 
     if (*(long*) ret != expected_sum) {
+        printf("\033[0;31m");
         fprintf(stderr, "Test \"1 - basic test\" failed. Returned and expected sum: %lx, %lx\n", *(long*)ret, expected_sum);
+        printf("\033[0m");
         return 0;
     }
 
+    printf("\033[1;32m");
     printf("Test \"1 - basic test\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

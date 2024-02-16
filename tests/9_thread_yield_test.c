@@ -17,6 +17,8 @@ int main() {
     for (int i = 0; i < NUM_THREADS; i++)
         ult_join(th[i], NULL);
 
+    printf("\033[1;32m");
     printf("Test \"9 - thread yield operation test\" passed! (check the output above, it should be 1-2-3-1-2-3)\n");
+    printf("\033[0m");
     return 0;
 }

@@ -20,6 +20,8 @@ int main() {
     ult_create(&th1, expected_join_failed_worker1, (void*)1);
     ult_join(th1, NULL);
 
+    printf("\033[1;32m");
     printf("Test \"11 - expected join error test\" passed! (check the above output: a joining error is expected)\n");
+    printf("\033[0m");
     return 0;
 }

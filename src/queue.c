@@ -85,6 +85,16 @@ queue_item queue_front(queue_t* this) {
     return this->front->item;
 }
 
+queue_item queue_back(queue_t* this) {
+    if (this->back == NULL){
+        fprintf(stderr, "Error: underflow in queue_back.\n");
+        fflush(stderr);
+        exit(EXIT_FAILURE);
+    }
+
+    return this->back->item;
+}
+
 // frees up all the resources used by the queue
 void queue_destroy(queue_t* this) {
     while(!queue_isempty(this))

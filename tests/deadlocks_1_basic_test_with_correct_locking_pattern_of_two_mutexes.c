@@ -19,6 +19,15 @@ bool did_deadlock_occur() {
     printf("[%s] checking if a deadlock exists...\n", __FUNCTION__);
     bool cycle_detected = graph_dfs(&waits_for_graph);
     printf("[%s] deadlock detected? %d\n", __FUNCTION__, cycle_detected);
+    if (!cycle_detected) {
+        printf("\033[1;32m");
+        printf("Deadlock test \"1 - basic test with correct locking pattern of two mutexes\" passed!\n");
+        printf("\033[0m");
+    } else {
+        printf("\033[0;31m");
+        printf("Deadlock test \"1 - basic test with correct locking pattern of two mutexes\" failed.\n");
+        printf("\033[0m");
+    }
     sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
     return cycle_detected;
 }
@@ -82,6 +91,5 @@ int main() {
     ult_mutex_destroy(&first_lock);
     ult_mutex_destroy(&second_lock);
 
-    printf("Deadlock test \"1 - basic test with correct locking pattern of two mutexes\" passed!\n");
     return 0;
 }

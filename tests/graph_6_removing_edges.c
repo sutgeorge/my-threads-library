@@ -31,6 +31,8 @@ int main() {
 
     assert(graph_count_edges(&mygraph) == 0);
 
+    printf("\033[1;32m");
     printf("Graph test \"6 - removing edges\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

@@ -23,10 +23,14 @@ int main() {
         ult_join(threads[i], NULL);
 
     if (sum != NUM_THREADS) {
+        printf("\033[0;31m");
         fprintf(stderr, "Test \"8 - mutex sum test\" failed. Result: %d; Expected value: %d;\n", sum, NUM_THREADS);
+        printf("\033[0m");
         return 0;
     }
 
+    printf("\033[1;32m");
     printf("Test \"8 - mutex sum test\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

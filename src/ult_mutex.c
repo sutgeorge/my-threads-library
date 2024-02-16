@@ -31,8 +31,8 @@ int ult_mutex_lock(ult_mutex_t* mutex) {
         return 0;
     }
 
+    graph_add_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) queue_back(mutex));
     queue_enqueue(mutex, (queue_item) ult_self());
-    graph_add_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) queue_front(mutex));
     // we could actually execute the deadlock detection function in this loop and terminate the threads in the
     // cycle if we wish to do so, but that is an idea for a potential improvement (deadlock resolution)
     int debug_print_count = 0;
@@ -70,28 +70,8 @@ int ult_mutex_unlock(ult_mutex_t *mutex){
         return -1;
     }
 
-
-    // The following part (all the instructions executed up until the queue_pop operation) ensures that the waits-for
-    // graph is properly updated once a thread releases a mutex that is requested by other threads as well.
-    // We keep track of the node_index to properly update the graph within a single loop (removing edges between the
-    // thread to be popped and a thread that is waiting for the lock, keeping a pointer that references the next thread
-    // to be the head of the queue/mutex, adding edges between the rest of the waiting threads and the
-    // new head of the queue/mutex).
-    queue_node_t* current = mutex->front;
-    queue_node_t* new_front_thread = NULL;
-
-    int node_index = 0;
-    while (current != NULL) {
-        node_index++;
-        if (node_index > 1)
-            graph_remove_edge(&waits_for_graph, (graph_node) current->item, (graph_node) mutex->front->item);
-        if (node_index == 2)
-            new_front_thread = current->item;
-        if (node_index > 2)
-            graph_add_edge(&waits_for_graph, (graph_node) current->item, (graph_node) new_front_thread);
-
-        current = current->next;
-    }
+    if (mutex->N >= 2)
+        graph_remove_edge(&waits_for_graph, (graph_node) mutex->front->next->item, (graph_node) mutex->front->item);
 
     queue_pop(mutex);
     sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
@@ -103,16 +83,12 @@ int ult_mutex_unlock(ult_mutex_t *mutex){
 int ult_mutex_destroy(ult_mutex_t *mutex) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
 
-    // The following part updates the waits-for graph when a mutex is destroyed (removes edges between the head of
-    // the queue and the rest of the threads that were waiting for the lock)
+    // The following part updates the waits-for graph when a mutex is destroyed (removes edges between consecutive
+    // threads in the queue)
     queue_node_t* current = mutex->front;
 
-    int node_index = 0;
-    while (current != NULL) {
-        node_index++;
-        if (node_index > 1)
-            graph_remove_edge(&waits_for_graph, (graph_node) current->item, (graph_node) mutex->front->item);
-
+    while (current != NULL && current->next != NULL) {
+        graph_remove_edge(&waits_for_graph, (graph_node) current->next->item, (graph_node) current->item);
         current = current->next;
     }
 

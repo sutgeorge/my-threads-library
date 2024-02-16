@@ -28,10 +28,14 @@ int main() {
 
     for (i = 0; i < NUM_THREADS; ++i)
         if ((long) rets[i] != values[i]) {
+            printf("\033[0;31m");
             fprintf(stderr,"Test \"2 - thread joining and values returned\" failed. The %ld-th returned value %ld is incorrect. Expected value: %ld\n", i, (long) rets[i], values[i]);
+            printf("\033[0m");
             return 0;
         }
 
+    printf("\033[1;32m");
     printf("Test \"2 - thread joining and values returned\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

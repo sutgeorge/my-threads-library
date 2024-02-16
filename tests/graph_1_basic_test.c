@@ -13,6 +13,8 @@ int main() {
     graph_add_edge(&mygraph, (void*)1, (void*)2);
     graph_destroy(&mygraph);
 
+    printf("\033[1;32m");
     printf("Graph test \"1 - basic test\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

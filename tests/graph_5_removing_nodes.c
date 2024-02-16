@@ -23,6 +23,8 @@ int main() {
 
     assert(graph_count_nodes(&mygraph) == 1);
 
+    printf("\033[1;32m");
     printf("Graph test \"5 - removing nodes\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

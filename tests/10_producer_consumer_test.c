@@ -41,10 +41,14 @@ int main() {
     ult_join(th2, NULL);
 
     if (acc != 0) {
+        printf("\033[0;31m");
         fprintf(stderr, "Test \"10 - producer-consumer test\" failed. Value: %d\n", acc);
+        printf("\033[0m");
         return 0;
     }
 
+    printf("\033[1;32m");
     printf("Test \"10 - producer-consumer test\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

@@ -16,6 +16,9 @@ int main() {
     assert(graph_count_nodes(&mygraph) == 6);
 
     graph_destroy(&mygraph);
+
+    printf("\033[1;32m");
     printf("Graph test \"2 - count nodes explicitly\" passed!\n");
+    printf("\033[0m");
     return 0;
 }

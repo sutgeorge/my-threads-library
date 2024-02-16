@@ -14,6 +14,8 @@ int main() {
     assert(list_size(&mylist) == 1);
     assert(list_head(&mylist) == (void*)6);
 
+    printf("\033[1;32m");
     printf("Linked list test \"2 - popping elements\" passed!\n");
+    printf("\033[0m");
     return 0;
 }
