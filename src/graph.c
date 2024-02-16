@@ -117,26 +117,32 @@ int graph_count_nodes(graph_t* this) {
 bool graph_dfs(graph_t* this) {
     list_t* discovered = (list_t*) malloc(sizeof(list_t));
     list_t* finished = (list_t*) malloc(sizeof(list_t));
-
     list_node_t* nodes_list_head = this->nodes.front;
     list_node_t* adjacency_list_head = this->adjacency_list.front;
     list_node_t* current_node = NULL;
 
     bool cycle_detected = false;
 
+    printf("[%s] debug 1\n", __FUNCTION__);
     while (nodes_list_head != NULL) {
+        printf("[%s] debug 2\n", __FUNCTION__);
         current_node = nodes_list_head;
-
-        if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item))
+        printf("[%s] debug 3\n", __FUNCTION__);
+        if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item)) {
+            printf("[%s] debug 4\n", __FUNCTION__);
             cycle_detected |= graph_visit(this, current_node->item, discovered, finished);//, cycles);
+        }
 
+        printf("[%s] debug 5\n", __FUNCTION__);
         nodes_list_head = nodes_list_head->next;
         adjacency_list_head = adjacency_list_head->next;
+        printf("[%s] debug 6\n", __FUNCTION__);
     }
 
+    printf("[%s] debug 7\n", __FUNCTION__);
     list_destroy(discovered);
     list_destroy(finished);
-
+    printf("[%s] debug 4\n", __FUNCTION__);
     return cycle_detected;
 }
 

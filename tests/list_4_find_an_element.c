@@ -11,6 +11,8 @@ int main() {
     list_pushback(&mylist, (void*)2);
     assert(list_size(&mylist) == 3);
     assert(list_find(&mylist, (void*)6) == true);
+    assert(list_find(&mylist, (void*)2) == true);
+    assert(list_find(&mylist, (void*)7) == true);
     assert(list_find(&mylist, (void*)12) == false);
 
     printf("Linked list test \"4 - find an element\" passed!\n");

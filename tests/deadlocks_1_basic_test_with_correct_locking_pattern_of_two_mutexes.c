@@ -11,10 +11,17 @@ ult_mutex_t second_lock;
 extern graph_t waits_for_graph;
 int sum = 0;
 
+bool did_deadlock_occur() {
+    printf("[%s] checking if a deadlock exists...\n", __FUNCTION__);
+    bool cycle_detected = graph_dfs(&waits_for_graph);
+    printf("[%s] deadlock detected? %d\n", __FUNCTION__, cycle_detected);
+    return cycle_detected;
+}
+
 void* deadlock_detector_worker(void* arg) {
+    bool cycle_detected = false;
     while (true) {
-        bool cycle_detected = graph_dfs(&waits_for_graph);
-        printf("[%s] deadlock detected? %d\n", __FUNCTION__, cycle_detected);
+        cycle_detected = did_deadlock_occur();
         if (cycle_detected)
             break;
         ult_yield();
@@ -23,6 +30,10 @@ void* deadlock_detector_worker(void* arg) {
 
 void* worker_1(void* arg) {
     ult_mutex_lock(&first_lock);
+    printf("[%s] sleeping for %d seconds - between locks\n", __FUNCTION__, 1);
+    sleep(1);
+    printf("[%s] yields the execution - between locks\n", __FUNCTION__);
+    ult_yield();
     ult_mutex_lock(&second_lock);
 
     printf("[%s] acquired lock2 \n", __FUNCTION__);
@@ -34,6 +45,10 @@ void* worker_1(void* arg) {
 
 void* worker_2(void* arg) {
     ult_mutex_lock(&first_lock);
+    printf("[%s] sleeping for %d seconds - between locks\n", __FUNCTION__, 1);
+    sleep(1);
+    printf("[%s] yields the execution - between locks\n", __FUNCTION__);
+    printf("[%s] did deadlock occur? -> %d\n", __FUNCTION__, did_deadlock_occur());
     ult_mutex_lock(&second_lock);
 
     printf("[%s] acquired lock2 \n", __FUNCTION__);
@@ -51,9 +66,9 @@ int main() {
     ult_mutex_init(&first_lock);
     ult_mutex_init(&second_lock);
 
+//    ult_create(&th0, deadlock_detector_worker, NULL);
     ult_create(&th1, worker_1, NULL);
     ult_create(&th2, worker_2, NULL);
-    ult_create(&th0, deadlock_detector_worker, NULL);
 
 //    ult_join(th0, &ret0);
     ult_join(th1, &ret1);

@@ -120,6 +120,9 @@ list_item list_remove(list_t* this, list_item item) {
 
 // finds whether an element exists in the list or not
 bool list_find(list_t* this, list_item item) {
+    if (this->N == 0)
+        return false;
+
     list_node_t* current = this->front;
     while (current != NULL) {
         if (current->item == item)
@@ -127,6 +130,7 @@ bool list_find(list_t* this, list_item item) {
 
         current = current->next;
     }
+
     return false;
 }
 

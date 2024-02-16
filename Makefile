@@ -16,7 +16,7 @@ LIBRARY = libult.a
 ### in the terminal (this is just to notice which test cases passed/failed)
 
 %.o: %.c
-	@$(CC) -c $(CFLAGS) $< -o $@
+	@$(CC) -c $(CFLAGS) $< -o $@ -g
 
 all: $(ULTS_OBJ) library
 
