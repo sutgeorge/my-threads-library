@@ -109,7 +109,11 @@ graph_6_removing_edges: $(ULTS_OBJ)
 	@$(CC) -o $(TEST_DIR)/graph_6_removing_edges -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/graph_6_removing_edges.c
 	@./$(TEST_DIR)/graph_6_removing_edges
 
-run_tests: 1_basic_test 2_thread_joins_and_values_returned 3_expected_proper_exit 4_spawning_threads_recursively 5_verifying_thread_id_equality_check 6_verifying_thread_self 7_expected_proper_thread_cancellation 8_mutex_test 9_thread_yield_test 10_producer_consumer_test 11_threads_joining_each_other list_1_basic_test list_2_popping_elements list_3_removing_elements list_4_find_an_element graph_1_basic_test graph_2_count_nodes graph_3_count_edges graph_4_detecting_cycles graph_5_removing_nodes graph_6_removing_edges
+deadlocks_1_tracking_edge_updates_in_waits_for_graph: $(ULTS_OBJ)
+	@$(CC) -o $(TEST_DIR)/deadlocks_1_tracking_edge_updates_in_waits_for_graph -I$(INC_DIR) $(ULTS_OBJ) $(TEST_DIR)/deadlocks_1_tracking_edge_updates_in_waits_for_graph.c
+	@./$(TEST_DIR)/deadlocks_1_tracking_edge_updates_in_waits_for_graph
+
+run_tests: 1_basic_test 2_thread_joins_and_values_returned 3_expected_proper_exit 4_spawning_threads_recursively 5_verifying_thread_id_equality_check 6_verifying_thread_self 7_expected_proper_thread_cancellation 8_mutex_test 9_thread_yield_test 10_producer_consumer_test 11_threads_joining_each_other list_1_basic_test list_2_popping_elements list_3_removing_elements list_4_find_an_element graph_1_basic_test graph_2_count_nodes graph_3_count_edges graph_4_detecting_cycles graph_5_removing_nodes graph_6_removing_edges deadlocks_1_tracking_edge_updates_in_waits_for_graph
 
 copy:
 	cp -f $(HEADER) $(INC_DIR)

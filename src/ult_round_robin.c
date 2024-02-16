@@ -5,6 +5,7 @@
 #include <string.h>
 #include "ult.h"
 #include "list.h"
+#include "graph.h"
 
 // thread status constants
 #define ULT_RUNNING 0 // running
@@ -27,9 +28,8 @@ typedef struct Thread_t {
 
 // A queue that stores the threads to be executed
 static queue_t ready_queue;
-// A list that will store all of the created mutexes and will only keep
-// existing mutexes (mutexes that are not destroyed)
-static list_t list_of_mutexes;
+// The waits-for graph which stores the dependencies between threads, based on the lock request that are performed
+graph_t waits_for_graph;
 
 // A queue that stores all of the terminated or cancelled (soon to be terminated) threads -> used in the thread_get
 // function to obtain a thread's ID even if it has completed its execution.
@@ -60,7 +60,6 @@ void ult_init(long period) {
     maxtid = 1;
     // We initialize the queue of threads that are ready to be processed
     queue_init(&ready_queue);
-    list_init(&list_of_mutexes);
 
     // creates the main thread, adds it to the ready queue to be processed
     // caveat: only the main thread is allocated on the heap and can be finally freed
