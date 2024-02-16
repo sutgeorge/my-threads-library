@@ -32,7 +32,6 @@ int ult_mutex_lock(ult_mutex_t* mutex) {
 
     queue_enqueue(mutex, (queue_item) ult_self());
     graph_add_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) queue_front(mutex));
-    printf("DEBUG: thread %ld -> number of edges in the waits-for graph: %d\n", ult_self(), graph_count_edges(&waits_for_graph));
     while (ult_self() != (ult_t) queue_front(mutex)) {
         sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
         sigvtalrm_handler(SIGVTALRM);

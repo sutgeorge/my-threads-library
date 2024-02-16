@@ -15,17 +15,17 @@ void graph_add_node(graph_t* this, graph_node node) {
 
 void graph_remove_node(graph_t* this, graph_node node) {
     list_node_t* current = this->nodes.front;
-    list_node_t* adjacency_list_head = this->adjacency_list.front;
+    list_node_t* current_adjacency_list = this->adjacency_list.front;
 
     while (current != NULL) {
         if (current->item == node) {
-            list_remove(&this->adjacency_list, adjacency_list_head);
+            list_remove(&this->adjacency_list, current_adjacency_list);
             list_remove(&this->nodes, node);
             return;
         }
 
         current = current->next;
-        adjacency_list_head = adjacency_list_head->next;
+        current_adjacency_list = current_adjacency_list->next;
     }
 }
 
@@ -126,7 +126,6 @@ bool graph_dfs(graph_t* this) {
 
     while (nodes_list_head != NULL) {
         current_node = nodes_list_head;
-        printf("graph dfs debug -> current_node: %p\n", current_node->item);
 
         if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item))
             cycle_detected |= graph_visit(this, current_node->item, discovered, finished);//, cycles);

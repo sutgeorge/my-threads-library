@@ -156,10 +156,15 @@ int ult_create(ult_t *thread, void *(*start_routine)(void *), void *arg) {
     t->ucp->uc_stack.ss_flags = 0; // flags
     t->ucp->uc_link = NULL; // points to the context that will be resumed when the current context terminates
 
+
     // creates the context, thereby causing the program execution to continue with a call to the ult_start
     // function passed to the "func" function pointer with the start_routine and arg parameters specified
     makecontext(t->ucp, (void (*)(void)) ult_start, 2, start_routine, arg);
     // enqueues/adds the created thread to the queue of threads to be processed
+
+    // adds the thread ID as a node in the waits-for graph
+    graph_add_node(&waits_for_graph, t->tid);
+
     queue_enqueue(&ready_queue, t);
 
     // unblocks the SIGVTALRM signal contained within the "vtalrm" signal set
@@ -206,6 +211,9 @@ int ult_join(ult_t thread, void **status) {
 // will contain the termination status (a value that can be used by other threads in the same process).
 void ult_exit(void* retval) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL); //blocks the SIGVTALRM signal
+
+    // removes the thread ID node from the waits-for graph
+    graph_remove_node(&waits_for_graph, ult_self());
 
     // exits the process if there are no more remaining threads to be processed in the ready queue
     if (queue_isempty(&ready_queue)) {

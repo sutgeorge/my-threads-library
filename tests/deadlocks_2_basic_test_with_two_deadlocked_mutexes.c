@@ -2,11 +2,24 @@
 #include <ult.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <assert.h>
+#include "../src/graph.h"
 #define SLEEP_DURATION 10
 
 ult_mutex_t first_lock;
 ult_mutex_t second_lock;
+extern graph_t waits_for_graph;
 int sum = 0;
+
+void* deadlock_detector_worker(void* arg) {
+    while (true) {
+        bool cycle_detected = graph_dfs(&waits_for_graph);
+        printf("[%s] deadlock detected? %d\n", __FUNCTION__, cycle_detected);
+        if (cycle_detected)
+            break;
+        ult_yield();
+    }
+}
 
 void* deadlocked_worker_1(void* arg) {
     ult_mutex_lock(&first_lock);
@@ -30,6 +43,10 @@ void* deadlocked_worker_2(void* arg) {
     sleep(1);
     printf("[%s] yields the execution - between locks\n", __FUNCTION__);
     ult_yield();
+//    printf("[%s] checks if a deadlock exists the execution - between locks\n", __FUNCTION__);
+//    bool cycle_detected = graph_dfs(&waits_for_graph);
+//    printf("[%s]: did a deadlock occur? %d\n", __FUNCTION__, cycle_detected);
+//    sleep(1);
     ult_mutex_lock(&first_lock);
 
     printf("[%s] acquired lock1 \n", __FUNCTION__);
@@ -41,8 +58,8 @@ void* deadlocked_worker_2(void* arg) {
 }
 
 int main() {
-    ult_t th1, th2;
-    void *ret, *ret2;
+    ult_t th0, th1, th2;
+    void *ret0, *ret1, *ret2;
 
     ult_init(1000); // we pick a time slice of 1000 microseconds
     ult_mutex_init(&first_lock);
@@ -50,13 +67,16 @@ int main() {
 
     ult_create(&th1, deadlocked_worker_1, NULL);
     ult_create(&th2, deadlocked_worker_2, NULL);
+    ult_create(&th0, deadlock_detector_worker, NULL);
 
-    ult_join(th1, &ret);
+    ult_join(th0, &ret0);
+    ult_join(th1, &ret1);
     ult_join(th2, &ret2);
 
     ult_mutex_destroy(&first_lock);
     ult_mutex_destroy(&second_lock);
 
-    printf("Deadlock test \"1 - tracking edge updates in waits-for graph\" passed!\n");
+    printf("Deadlock test \"2 - basic test with two deadlocked mutexes\" passed!\n");
     return 0;
 }
+

@@ -92,6 +92,9 @@ list_item list_remove(list_t* this, list_item item) {
     list_item removed_item = NULL;
     list_node_t* prev = NULL;
 
+    if (current == NULL)
+        return current;
+
     while (current != NULL) {
         if (current->item == item) {
             removed_item = current->item;
