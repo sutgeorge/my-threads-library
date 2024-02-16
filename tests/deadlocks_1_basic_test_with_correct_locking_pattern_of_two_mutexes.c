@@ -1,20 +1,25 @@
 #include <stdio.h>
-#include <ult.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <ult.h>
 #include "../src/graph.h"
 #define SLEEP_DURATION 10
 
 ult_mutex_t first_lock;
 ult_mutex_t second_lock;
 extern graph_t waits_for_graph;
+extern sigset_t vtalrm;
 int sum = 0;
 
+// checks if a deadlock occurs by performing a depth-first search on the waits-for graph that is
+// updated every time a thread requests a lock
 bool did_deadlock_occur() {
+    sigprocmask(SIG_BLOCK, &vtalrm, NULL);
     printf("[%s] checking if a deadlock exists...\n", __FUNCTION__);
     bool cycle_detected = graph_dfs(&waits_for_graph);
     printf("[%s] deadlock detected? %d\n", __FUNCTION__, cycle_detected);
+    sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
     return cycle_detected;
 }
 

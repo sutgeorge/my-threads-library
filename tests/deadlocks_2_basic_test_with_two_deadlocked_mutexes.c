@@ -9,14 +9,28 @@
 ult_mutex_t first_lock;
 ult_mutex_t second_lock;
 extern graph_t waits_for_graph;
+extern sigset_t vtalrm;
 int sum = 0;
 
+bool did_deadlock_occur() {
+    sigprocmask(SIG_BLOCK, &vtalrm, NULL);
+    printf("[%s] checking if a deadlock exists...\n", __FUNCTION__);
+    bool cycle_detected = graph_dfs(&waits_for_graph);
+    printf("[%s] deadlock detected? %d\n", __FUNCTION__, cycle_detected);
+    sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
+    return cycle_detected;
+}
+
 void* deadlock_detector_worker(void* arg) {
+    bool cycle_detected = false;
     while (true) {
-        bool cycle_detected = graph_dfs(&waits_for_graph);
-        printf("[%s] deadlock detected? %d\n", __FUNCTION__, cycle_detected);
-        if (cycle_detected)
+        printf("[%s] running deadlock detection check...\n", __FUNCTION__);
+        cycle_detected = did_deadlock_occur();
+        printf("[%s] deadlock detection check finished!\n", __FUNCTION__);
+        if (cycle_detected) {
+            printf("[%s] A cycle was detected, the deadlock detector is terminated.\n", __FUNCTION__);
             break;
+        }
         ult_yield();
     }
 }
@@ -30,7 +44,7 @@ void* deadlocked_worker_1(void* arg) {
     ult_mutex_lock(&second_lock);
 
     printf("[%s] acquired lock2 \n", __FUNCTION__);
-    sum++;
+//    sum++;
 
     ult_mutex_unlock(&second_lock);
     printf("[%s] between unlocks\n", __FUNCTION__);
@@ -43,14 +57,10 @@ void* deadlocked_worker_2(void* arg) {
     sleep(1);
     printf("[%s] yields the execution - between locks\n", __FUNCTION__);
     ult_yield();
-//    printf("[%s] checks if a deadlock exists the execution - between locks\n", __FUNCTION__);
-//    bool cycle_detected = graph_dfs(&waits_for_graph);
-//    printf("[%s]: did a deadlock occur? %d\n", __FUNCTION__, cycle_detected);
-//    sleep(1);
     ult_mutex_lock(&first_lock);
 
     printf("[%s] acquired lock1 \n", __FUNCTION__);
-    sum++;
+//    sum++;
 
     ult_mutex_unlock(&first_lock);
     printf("[%s] between unlocks\n", __FUNCTION__);

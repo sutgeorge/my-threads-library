@@ -123,26 +123,17 @@ bool graph_dfs(graph_t* this) {
 
     bool cycle_detected = false;
 
-    printf("[%s] debug 1\n", __FUNCTION__);
     while (nodes_list_head != NULL) {
-        printf("[%s] debug 2\n", __FUNCTION__);
         current_node = nodes_list_head;
-        printf("[%s] debug 3\n", __FUNCTION__);
-        if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item)) {
-            printf("[%s] debug 4\n", __FUNCTION__);
+        if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item))
             cycle_detected |= graph_visit(this, current_node->item, discovered, finished);//, cycles);
-        }
 
-        printf("[%s] debug 5\n", __FUNCTION__);
         nodes_list_head = nodes_list_head->next;
         adjacency_list_head = adjacency_list_head->next;
-        printf("[%s] debug 6\n", __FUNCTION__);
     }
 
-    printf("[%s] debug 7\n", __FUNCTION__);
     list_destroy(discovered);
     list_destroy(finished);
-    printf("[%s] debug 4\n", __FUNCTION__);
     return cycle_detected;
 }
 

@@ -4,6 +4,7 @@
 #include <ucontext.h> // required for the user-level context switching operations
 #include "queue.h" // queue data structure implemented from scratch
 #include <signal.h> // library used for handling OS signals
+#include <stdbool.h>
 
 // a thread is by default represented as an "unsigned long int", just like most platforms define the pthread_t type in
 // the pthread library

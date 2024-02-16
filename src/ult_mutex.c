@@ -19,6 +19,7 @@ int ult_mutex_init(ult_mutex_t* mutex) {
 // acquires a mutex and returns 0 to indicate a successful mutex lock
 int ult_mutex_lock(ult_mutex_t* mutex) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL);
+
     if (queue_isempty(mutex)) {
         queue_enqueue(mutex, (queue_item) ult_self());
         sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
@@ -32,10 +33,24 @@ int ult_mutex_lock(ult_mutex_t* mutex) {
 
     queue_enqueue(mutex, (queue_item) ult_self());
     graph_add_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) queue_front(mutex));
+    // we could actually execute the deadlock detection function in this loop and terminate the threads in the
+    // cycle if we wish to do so, but that is an idea for a potential improvement (deadlock resolution)
+    int debug_print_count = 0;
     while (ult_self() != (ult_t) queue_front(mutex)) {
         sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
+        if (debug_print_count < 1)
+            printf("[%s] debug 8 - thread %lu - mutex owner: %p \n", __FUNCTION__, ult_self(), mutex->front->item);
         sigvtalrm_handler(SIGVTALRM);
+
+        if (debug_print_count < 1)
+            printf("[%s] debug 9 - thread %lu - mutex owner: %p \n", __FUNCTION__, ult_self(), mutex->front->item);
+
         sigprocmask(SIG_BLOCK, &vtalrm, NULL);
+        if (debug_print_count < 1)
+            printf("[%s] debug 10 - thread %lu - mutex owner: %p \n", __FUNCTION__, ult_self(), mutex->front->item);
+
+        debug_print_count++;
+//        printf("[%s] debug 11 - thread %lu - mutex owner: %p - debug_print_count: %d \n", __FUNCTION__, ult_self(), mutex->front->item, debug_print_count);
     }
 
     sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
