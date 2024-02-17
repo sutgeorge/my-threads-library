@@ -60,6 +60,7 @@ void ult_init(long period) {
     maxtid = 1;
     // We initialize the queue of threads that are ready to be processed
     queue_init(&ready_queue);
+    graph_init(&waits_for_graph);
 
     // creates the main thread, adds it to the ready queue to be processed
     // caveat: only the main thread is allocated on the heap and can be finally freed
@@ -175,17 +176,27 @@ int ult_create(ult_t *thread, void *(*start_routine)(void *), void *arg) {
 // Like pthread_join, this function waits for the thread to terminate. The "status" parameter
 // will contain the status of the joined thread after its termination.
 int ult_join(ult_t thread, void **status) {
-    if (thread == current->tid) // edge-case for threads that attempt to join themselves
+    printf("\033[0;34m");
+    printf("[%s] adding edge between threads %lu and %lu\n", __FUNCTION__, ult_self(), thread);
+    printf("\033[0m");
+    graph_add_edge(&waits_for_graph, (ult_t) ult_self(), (ult_t) thread);
+    if (thread == current->tid) { // edge-case for threads that attempt to join themselves
+//        graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
         return -1;
+    }
 
     thread_t* t;
     // if a thread is not yet created, the thread will not be joined
-    if ((t = thread_get(thread)) == NULL)
+    if ((t = thread_get(thread)) == NULL) {
+//        graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
         return -1;
+    }
 
     // if the thread t is already joining, stop here
-    if (t->joining == current->tid)
+    if (t->joining == current->tid) {
+//        graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
         return -1;
+    }
 
     current->joining = t->tid;
     // waits for the thread to terminate
@@ -194,6 +205,8 @@ int ult_join(ult_t thread, void **status) {
         sigvtalrm_handler(SIGVTALRM);
         sigprocmask(SIG_BLOCK, &vtalrm, NULL); // blocks/disables the SIGVTALRM signal
     }
+
+//    graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
 
     if (status == NULL)
         return 0;

@@ -124,6 +124,11 @@ bool list_find(list_t* this, list_item item) {
         return false;
 
     list_node_t* current = this->front;
+    ;
+//    printf("\033[31;m");
+//    printf("[%s] list size: %d\n", __FUNCTION__, list_size(this));
+//    printf("\033[0m");
+
     while (current != NULL) {
         if (current->item == item)
             return true;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"
+#include "ult.h"
 
 void graph_init(graph_t* this) {
     list_init(&this->nodes);
@@ -10,6 +11,7 @@ void graph_init(graph_t* this) {
 void graph_add_node(graph_t* this, graph_node node) {
     list_pushback(&this->nodes, node);
     list_t* neighbours_list = (list_t*) malloc(sizeof(list_t));
+    list_init(neighbours_list);
     list_pushback(&this->adjacency_list, neighbours_list);
 }
 
@@ -117,6 +119,8 @@ int graph_count_nodes(graph_t* this) {
 bool graph_dfs(graph_t* this) {
     list_t* discovered = (list_t*) malloc(sizeof(list_t));
     list_t* finished = (list_t*) malloc(sizeof(list_t));
+    list_init(discovered);
+    list_init(finished);
     list_node_t* nodes_list_head = this->nodes.front;
     list_node_t* adjacency_list_head = this->adjacency_list.front;
     list_node_t* current_node = NULL;
@@ -125,8 +129,17 @@ bool graph_dfs(graph_t* this) {
 
     while (nodes_list_head != NULL) {
         current_node = nodes_list_head;
+
         if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item))
             cycle_detected |= graph_visit(this, current_node->item, discovered, finished);//, cycles);
+
+        printf("\033[0;34m");
+        printf("[%s] discovered list size: %d\n", __FUNCTION__, list_size(discovered));
+        printf("\033[0m");
+
+        printf("\033[0;34m");
+        printf("[%s] finished list size: %d\n", __FUNCTION__, list_size(finished));
+        printf("\033[0m");
 
         nodes_list_head = nodes_list_head->next;
         adjacency_list_head = adjacency_list_head->next;
@@ -162,6 +175,7 @@ bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* fin
 
             list_node_t* discovered_node = discovered->front;
             list_t* detected_cycle_path = (list_t*) malloc(sizeof(list_t));
+            list_init(detected_cycle_path);
             bool cycle_path_started = false;
 
             while (discovered_node != NULL) {
@@ -176,6 +190,7 @@ bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* fin
 
             list_pushback(detected_cycle_path, neighbour_node->item);
             print_list_elements(detected_cycle_path);
+            free(detected_cycle_path);
             break;
         }
 
