@@ -22,28 +22,13 @@ bool did_deadlock_occur() {
     return cycle_detected;
 }
 
-//void* deadlock_detector_worker(void* arg) {
-//    bool cycle_detected = false;
-//    while (true) {
-//        printf("[%s] running deadlock detection check...\n", __FUNCTION__);
-//        cycle_detected = did_deadlock_occur();
-//        printf("[%s] deadlock detection check finished!\n", __FUNCTION__);
-//        if (cycle_detected) {
-//            printf("[%s] A cycle was detected, the deadlock detector is terminated.\n", __FUNCTION__);
-//            break;
-//        }
-//        ult_yield();
-//    }
-//}
-
 void* deadlocked_worker_1(void* arg) {
     ult_t* thread_2 = (ult_t*) arg;
 
-    printf("[%s] - thread %lu yields the execution \n", __FUNCTION__, ult_self());
-    ult_yield();
     printf("[%s] - thread %lu joins with thread %lu\n", __FUNCTION__, ult_self(), *thread_2);
 
     ult_join(*thread_2, NULL);
+
     ult_yield();
 }
 
@@ -51,9 +36,9 @@ void* deadlocked_worker_2(void* arg) {
     ult_t* thread_1 = (ult_t*) arg;
 
     printf("[%s] - thread %lu joins with thread %lu\n", __FUNCTION__, ult_self(), *thread_1);
+
     ult_join(*thread_1, NULL);
-//    printf("[%s] - thread %lu yields the execution \n", __FUNCTION__, ult_self());
-//    ult_yield();
+
     bool deadlocked = did_deadlock_occur();
     printf("[%s] - thread %lu - Did a deadlock occur? --> %d \n", __FUNCTION__, ult_self(), deadlocked);
     printf("[%s] - thread %lu yields the execution \n", __FUNCTION__, ult_self());

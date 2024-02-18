@@ -164,7 +164,7 @@ int ult_create(ult_t *thread, void *(*start_routine)(void *), void *arg) {
     // enqueues/adds the created thread to the queue of threads to be processed
 
     // adds the thread ID as a node in the waits-for graph
-    graph_add_node(&waits_for_graph, t->tid);
+    graph_add_node(&waits_for_graph,(graph_node) t->tid);
 
     queue_enqueue(&ready_queue, t);
 
@@ -176,25 +176,25 @@ int ult_create(ult_t *thread, void *(*start_routine)(void *), void *arg) {
 // Like pthread_join, this function waits for the thread to terminate. The "status" parameter
 // will contain the status of the joined thread after its termination.
 int ult_join(ult_t thread, void **status) {
-    printf("\033[0;34m");
+    printf("\033[0;33m");
     printf("[%s] adding edge between threads %lu and %lu\n", __FUNCTION__, ult_self(), thread);
     printf("\033[0m");
-    graph_add_edge(&waits_for_graph, (ult_t) ult_self(), (ult_t) thread);
+    graph_add_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) thread);
     if (thread == current->tid) { // edge-case for threads that attempt to join themselves
-//        graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
+//        graph_remove_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) thread);
         return -1;
     }
 
     thread_t* t;
     // if a thread is not yet created, the thread will not be joined
     if ((t = thread_get(thread)) == NULL) {
-//        graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
+//        graph_remove_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) thread);
         return -1;
     }
 
     // if the thread t is already joining, stop here
     if (t->joining == current->tid) {
-//        graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
+//        graph_remove_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node)thread);
         return -1;
     }
 
@@ -206,7 +206,7 @@ int ult_join(ult_t thread, void **status) {
         sigprocmask(SIG_BLOCK, &vtalrm, NULL); // blocks/disables the SIGVTALRM signal
     }
 
-//    graph_remove_edge(&waits_for_graph, (ult_t) ult_self(), thread);
+//    graph_remove_edge(&waits_for_graph, (graph_node) ult_self(), (graph_node) thread);
 
     if (status == NULL)
         return 0;
@@ -226,7 +226,7 @@ void ult_exit(void* retval) {
     sigprocmask(SIG_BLOCK, &vtalrm, NULL); //blocks the SIGVTALRM signal
 
     // removes the thread ID node from the waits-for graph
-    graph_remove_node(&waits_for_graph, ult_self());
+    graph_remove_node(&waits_for_graph, (graph_node) ult_self());
 
     // exits the process if there are no more remaining threads to be processed in the ready queue
     if (queue_isempty(&ready_queue)) {

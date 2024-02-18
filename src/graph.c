@@ -133,14 +133,6 @@ bool graph_dfs(graph_t* this) {
         if (!list_find(discovered, current_node->item) && !list_find(finished, current_node->item))
             cycle_detected |= graph_visit(this, current_node->item, discovered, finished);//, cycles);
 
-        printf("\033[0;34m");
-        printf("[%s] discovered list size: %d\n", __FUNCTION__, list_size(discovered));
-        printf("\033[0m");
-
-        printf("\033[0;34m");
-        printf("[%s] finished list size: %d\n", __FUNCTION__, list_size(finished));
-        printf("\033[0m");
-
         nodes_list_head = nodes_list_head->next;
         adjacency_list_head = adjacency_list_head->next;
     }
@@ -170,6 +162,7 @@ bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* fin
         if (list_find(discovered, neighbour_node->item)) {
             cycle_detected = true;
 
+            printf("\033[0;35m");
             printf("start of the cycle: %p\n", neighbour_node->item);
             printf("discovered cycle: \n");
 
@@ -190,6 +183,8 @@ bool graph_visit(graph_t* this, graph_node node, list_t* discovered, list_t* fin
 
             list_pushback(detected_cycle_path, neighbour_node->item);
             print_list_elements(detected_cycle_path);
+            graph_print_edges(this);
+            printf("\033[0m");
             free(detected_cycle_path);
             break;
         }
