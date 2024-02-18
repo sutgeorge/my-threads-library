@@ -21,10 +21,6 @@ bool did_deadlock_occur() {
         printf("\033[1;32m");
         printf("Deadlock test \"2 - basic test with two deadlocked threads\" passed!\n");
         printf("\033[0m");
-    } else {
-        printf("\033[0;31m");
-        printf("Deadlock test \"2 - basic test with two deadlocked threads\" failed.\n");
-        printf("\033[0m");
     }
     sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
     return cycle_detected;

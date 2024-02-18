@@ -36,6 +36,12 @@ int ult_mutex_lock(ult_mutex_t* mutex) {
     // we could actually execute the deadlock detection function in this loop and terminate the threads in the
     // cycle if we wish to do so, but that is an idea for a potential improvement (deadlock resolution)
     int debug_print_count = 0;
+    // In case of a simple mutex-based deadlock, this loop will essentially run indefinitely -> this is one of the
+    // possible causes of compiler-generated errors like "***stack smashing detected***" or SIGSEGV/segmentation faults
+    // -> the loop runs continuously, the SIGVTALRM handler function is called and therefore the memory that is used
+    // (such as the zombie queue which stores terminated threads and the ready queue that will store the same thread IDs
+    // whose contexts are swapped) is overflown with the same data (in our case, the thread ID pushed onto the queue).
+    // As a future improvement, it would probably make sense to prevent the overallocation of memory in such cases.
     while (ult_self() != (ult_t) queue_front(mutex)) {
         sigprocmask(SIG_UNBLOCK, &vtalrm, NULL);
         if (debug_print_count < 1)
